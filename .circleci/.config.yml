@@ -1,0 +1,47 @@
+version: 2.1
+
+executors:
+	node-lts:
+		docker:
+			- image: circleci/node:12.13
+		working_directory: ~/repo
+
+commands:
+	setup:
+		steps:
+			- checkout
+			- restore_cache:
+					keys:
+						- v1-dependancies-{{ checksum "package.json" }}
+						- v1-dependancies-
+
+jobs:
+  build:
+		executor: node-lts
+    steps:
+      - checkout
+      - run: yarn
+      - save_cache:
+					paths:
+						- node_modules
+					key: v1-dependancies-{{ checksum "package.json" }}
+	test:
+		executor: node-lts
+    steps:
+      - checkout
+      - run:
+					command: |
+						yarn type-check
+						yarn lint
+						yarn coverage
+			- store_artifacts:
+					path: ~/repo/coverage
+
+workflows:
+	version: 2
+	test:
+		jobs:
+			- build
+			- test:
+					requires:
+						- build
