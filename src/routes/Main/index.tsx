@@ -3,12 +3,13 @@ import { createStackNavigator, StackCardInterpolationProps } from '@react-naviga
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { PATH, TPath, STATUS, TStatus } from '@/constants';
-import { Initial, Loading, ChooseLogin, UserInfo } from '@/components/pages';
+import { Initial, Loading, ChooseLogin, UserInfo, Input } from '@/components/pages';
 import { HomeNavigator, StatisticsNavigator, UserInfoNavigator } from '@/routes/Main/routeComponents';
 import * as UiContext from '@/contexts/ui';
 
 /** navigation stack */
 const Stack = createStackNavigator();
+const ModalStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const HomeDrawer = createDrawerNavigator();
 const StatisticsDrawer = createDrawerNavigator();
@@ -65,12 +66,21 @@ function TabRoutes() {
 	);
 }
 
+function TabWidthModalRoutes() {
+	return (
+		<ModalStack.Navigator mode="modal" headerMode="none">
+			<Stack.Screen name={PATH.HOME} component={TabRoutes} />
+			<Stack.Screen name={PATH.INPUT} component={Input} />
+		</ModalStack.Navigator>
+	);
+}
+
 function switchingAuthStatus(status: TStatus) {
 	switch (status) {
 		case STATUS.UN_AUTHORIZED:
 			return <Stack.Screen name={PATH.CHOOSE_LOGIN} component={ChooseLogin} />;
 		case STATUS.AUTHORIZED:
-			return <Stack.Screen name={PATH.HOME} component={TabRoutes} />;
+			return <Stack.Screen name={PATH.HOME} component={TabWidthModalRoutes} />;
 		case STATUS.FIRST_OPEN:
 		default:
 			return <Stack.Screen name={PATH.INITIAL} component={Initial} />;

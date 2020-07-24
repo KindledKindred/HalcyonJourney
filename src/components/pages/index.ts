@@ -7,3 +7,4 @@ export { ChooseLogin } from './ChooseLogin';
 export { Statistics } from './Statistics';
 export { Detail } from './Detail';
 export { UserInfo } from './UserInfo';
+export { Input } from './Input';
