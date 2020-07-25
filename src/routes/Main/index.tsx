@@ -3,13 +3,15 @@ import { createStackNavigator, StackCardInterpolationProps } from '@react-naviga
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { PATH, TPath, STATUS, TStatus } from '@/constants';
-import { Initial, Loading, ChooseLogin, UserInfo, Input } from '@/components/pages';
+import { Initial, Loading, ChooseLogin, UserInfo, Input, SignIn, SignUp } from '@/components/pages';
 import { HomeNavigator, StatisticsNavigator, UserInfoNavigator } from '@/routes/Main/routeComponents';
 import * as UiContext from '@/contexts/ui';
+import { onChange } from 'react-native-reanimated';
 
 /** navigation stack */
 const Stack = createStackNavigator();
 const ModalStack = createStackNavigator();
+const ChooseLoginStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const HomeDrawer = createDrawerNavigator();
 const StatisticsDrawer = createDrawerNavigator();
@@ -75,10 +77,19 @@ function TabWidthModalRoutes() {
 	);
 }
 
+function ChooseLoginNavigator() {
+	return (
+		<ChooseLoginStack.Navigator initialRouteName={PATH.CHOOSE_LOGIN}>
+			<ChooseLoginStack.Screen name={PATH.SIGN_IN} component={SignIn} />
+			<ChooseLoginStack.Screen name={PATH.SIGN_UP} component={SignUp} />
+		</ChooseLoginStack.Navigator>
+	);
+}
+
 function switchingAuthStatus(status: TStatus) {
 	switch (status) {
 		case STATUS.UN_AUTHORIZED:
-			return <Stack.Screen name={PATH.CHOOSE_LOGIN} component={ChooseLogin} />;
+			return <Stack.Screen name={PATH.CHOOSE_LOGIN} component={ChooseLoginNavigator} />;
 		case STATUS.AUTHORIZED:
 			return <Stack.Screen name={PATH.HOME} component={TabWidthModalRoutes} />;
 		case STATUS.FIRST_OPEN:
