@@ -1,5 +1,3 @@
-import { types } from '@babel/core';
-
 export const PATH = {
 	INITIAL: 'INITIAL',
 	HOME: 'HOME',

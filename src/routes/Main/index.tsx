@@ -2,13 +2,29 @@ import React from 'react';
 import { createStackNavigator, StackCardInterpolationProps } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { PATH, TPath, STATUS, TStatus } from '@/constants';
+import { PATH, TPath, STATUS, TStatus, COLOR } from '@/constants';
+import { headerStyle, headerTintColor } from '@/routes/Header';
 import { Initial, Loading, ChooseLogin, UserInfo, Input, SignIn, SignUp } from '@/components/pages';
 import { HomeNavigator, StatisticsNavigator, UserInfoNavigator } from '@/routes/Main/routeComponents';
 import * as UiContext from '@/contexts/ui';
-import { onChange } from 'react-native-reanimated';
 
-/** navigation stack */
+/**
+ * Styles
+ */
+const cardStyle = {
+	backgroundColor: COLOR.MAIN,
+};
+const drawerStyle = {
+	backgroundColor: COLOR.MAIN,
+};
+const drawerContentOptions = {
+	activeTintColor: COLOR.PRIMARY,
+	inactiveTintColor: COLOR.WHITE,
+};
+
+/**
+ * Navigation Stacks
+ */
 const Stack = createStackNavigator();
 const ModalStack = createStackNavigator();
 const ChooseLoginStack = createStackNavigator();
@@ -16,11 +32,16 @@ const Tab = createBottomTabNavigator();
 const HomeDrawer = createDrawerNavigator();
 const StatisticsDrawer = createDrawerNavigator();
 
-/** animation */
+/**
+ * Animations
+ */
 const forFade = ({ current }: StackCardInterpolationProps) => ({
 	cardStyles: { opacity: current.progress },
 });
 
+/**
+ * Functional Methods
+ */
 const getActiveRouteName = (state: any): string => {
 	if (!state || !state.routes) {
 		return '';
@@ -33,9 +54,16 @@ const getActiveRouteName = (state: any): string => {
 	return route.name;
 };
 
+/**
+ * Components
+ */
 function HomeWithDrawer() {
 	return (
-		<HomeDrawer.Navigator initialRouteName={PATH.HOME}>
+		<HomeDrawer.Navigator
+			initialRouteName={PATH.HOME}
+			drawerStyle={drawerStyle}
+			drawerContentOptions={drawerContentOptions}
+		>
 			<HomeDrawer.Screen name={PATH.HOME} component={HomeNavigator} />
 			<HomeDrawer.Screen name={PATH.USER_INFO} component={UserInfoNavigator} />
 		</HomeDrawer.Navigator>
@@ -44,7 +72,11 @@ function HomeWithDrawer() {
 
 function StatisticsWithDrawer() {
 	return (
-		<StatisticsDrawer.Navigator>
+		<StatisticsDrawer.Navigator
+			initialRouteName={PATH.STATISTICS}
+			drawerStyle={drawerStyle}
+			drawerContentOptions={drawerContentOptions}
+		>
 			<StatisticsDrawer.Screen name={PATH.STATISTICS} component={StatisticsNavigator} />
 			<StatisticsDrawer.Screen name={PATH.HOME} component={UserInfoNavigator} />
 		</StatisticsDrawer.Navigator>
@@ -55,6 +87,11 @@ function TabRoutes() {
 	return (
 		<Tab.Navigator
 			initialRouteName={PATH.HOME}
+			tabBarOptions={{
+				inactiveTintColor: COLOR.WHITE,
+				activeTintColor: COLOR.PRIMARY,
+				style: { backgroundColor: COLOR.MAIN },
+			}}
 			screenOptions={(props: any) => {
 				const routeName = getActiveRouteName(props.route.state);
 				return {
@@ -70,7 +107,7 @@ function TabRoutes() {
 
 function TabWidthModalRoutes() {
 	return (
-		<ModalStack.Navigator mode="modal" headerMode="none">
+		<ModalStack.Navigator mode="modal" headerMode="none" screenOptions={{ cardStyle }}>
 			<Stack.Screen name={PATH.HOME} component={TabRoutes} />
 			<Stack.Screen name={PATH.INPUT} component={Input} />
 		</ModalStack.Navigator>
@@ -79,9 +116,13 @@ function TabWidthModalRoutes() {
 
 function ChooseLoginNavigator() {
 	return (
-		<ChooseLoginStack.Navigator initialRouteName={PATH.CHOOSE_LOGIN}>
-			<ChooseLoginStack.Screen name={PATH.SIGN_IN} component={SignIn} />
-			<ChooseLoginStack.Screen name={PATH.SIGN_UP} component={SignUp} />
+		<ChooseLoginStack.Navigator
+			initialRouteName={PATH.CHOOSE_LOGIN}
+			screenOptions={{ cardStyle, headerStyle, headerTintColor }}
+		>
+			<ChooseLoginStack.Screen name={PATH.CHOOSE_LOGIN} component={ChooseLogin} options={{ title: 'Choose login' }} />
+			<ChooseLoginStack.Screen name={PATH.SIGN_IN} component={SignIn} options={{ title: 'Sign in' }} />
+			<ChooseLoginStack.Screen name={PATH.SIGN_UP} component={SignUp} options={{ title: 'Sign up' }} />
 		</ChooseLoginStack.Navigator>
 	);
 }
